@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import os
 
 app = Flask(__name__)
 
@@ -8,9 +9,9 @@ def home():
 
 @app.route('/calibrate')
 def calibrate():
-    intention = request.args.get('intention', '')
     mood = request.args.get('mood', '')
-    return render_template('calibrate.html', intention=intention, mood=mood)
+    return render_template('calibrate.html', mood=mood)
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True) 
