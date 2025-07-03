@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Inner Universe</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .chakra-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('/static/img/img2.webp') no-repeat center center fixed;
+            background-size: cover;
+            z-index: 0;
+            filter: brightness(0.8) blur(1px);
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .welcome {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 16px #000;
+        }
+        .intro {
+            color: #f3f3f3;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 1px 8px #000;
+        }
+        .intention-box, .mood-select {
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .intention-box input {
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        .mood-select select {
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        .begin-btn {
+            margin-top: 2rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.3rem;
+            background: #fff;
+            color: #7b2ff2;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            transition: background 0.2s, color 0.2s;
+            font-weight: bold;
+        }
+        .begin-btn:hover {
+            background: #7b2ff2;
+            color: #fff;
+        }
+        .subtext {
+            color: #fff;
+            font-size: 1rem;
+            margin-top: 0.2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 1px 8px #000;
+        }
+        /* Soft glowing animation */
+        .chakra-glow {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 400px;
+            height: 400px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(123,47,242,0.12) 60%, rgba(123,47,242,0.05) 100%);
+            filter: blur(30px);
+            animation: glow 4s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+        @keyframes glow {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            pointer-events: none;
+            animation: float 8s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100vh); }
+        }
+    </style>
+</head>
+<body>
+    <div class="chakra-bg"></div>
+    <div class="overlay"></div>
+    <div class="chakra-glow"></div>
+    <div class="content">
+        <div class="welcome">Welcome to Inner Universe</div>
+        <div class="intro">Balance your energy. Visualise your inner harmony.</div>
+        <form method="get" action="/calibrate">
+            <div class="mood-select">
+                <label for="mood">Select your mood:</label>
+                <select id="mood" name="mood">
+                    <option value="">Choose </option>
+                    <option value="Calm">Calm</option>
+                    <option value="Energize">Energize</option>
+                    <option value="Focus">Focus</option>
+                </select>
+            </div>
+            <button class="begin-btn" type="submit">Begin</button>
+            <div class="subtext">Start your self-calibration</div>
+        </form>
+    </div>
+    <script>
+        // Generate floating particles
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 8 + 4;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.left = `${Math.random() * 100}vw`;
+            p.style.top = `${Math.random() * 100}vh`;
+            p.style.animationDuration = `${6 + Math.random() * 6}s`;
+            document.body.appendChild(p);
+        }
+    </script>
+</body>
+</html> 
