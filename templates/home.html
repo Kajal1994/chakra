@@ -34,62 +34,59 @@
             justify-content: center;
             min-height: 100vh;
         }
-        .welcome {
-            color: #fff;
+        .welcome-container {
+            background: rgba(255,255,255,0.12);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 8px 40px rgba(123,47,242,0.2);
+            max-width: 520px;
+            width: 100%;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .welcome-title {
             font-size: 2.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 16px #000;
+            color: #fff;
+            text-shadow: 0 4px 20px #000;
+            margin-bottom: 1rem;
+            line-height: 1.2;
         }
-        .intro {
-            color: #f3f3f3;
+        .welcome-description {
             font-size: 1.2rem;
-            margin-bottom: 2rem;
-            text-shadow: 0 1px 8px #000;
+            color: #e8e8e8;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
-        .intention-box, .mood-select {
-            margin: 1rem 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .gradient-divider {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg,#7b2ff2,#f357a8,#43a047);
+            border-radius: 3px;
+            margin: 1.5rem auto;
+            opacity: 0.8;
         }
-        .intention-box input {
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            border: none;
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
+        .welcome-subtext {
+            font-size: 1rem;
+            color: #ccc;
+            margin-top: 1rem;
         }
-        .mood-select select {
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            border: none;
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-        }
-        .begin-btn {
-            margin-top: 2rem;
+        .start-journey-btn {
+            font-size: 1.2rem;
             padding: 1rem 2.5rem;
-            font-size: 1.3rem;
-            background: #fff;
-            color: #7b2ff2;
+            background: linear-gradient(135deg,#7b2ff2,#f357a8);
+            color: #fff;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 4px 20px rgba(123,47,242,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
             font-weight: bold;
         }
-        .begin-btn:hover {
-            background: #7b2ff2;
-            color: #fff;
-        }
-        .subtext {
-            color: #fff;
-            font-size: 1rem;
-            margin-top: 0.2rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 1px 8px #000;
+        .start-journey-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(123,47,242,0.4);
         }
         /* Soft glowing animation */
         .chakra-glow {
@@ -128,21 +125,13 @@
     <div class="overlay"></div>
     <div class="chakra-glow"></div>
     <div class="content">
-        <div class="welcome">Welcome to Inner Universe</div>
-        <div class="intro">Balance your energy. Visualise your inner harmony.</div>
-        <form method="get" action="/calibrate">
-            <div class="mood-select">
-                <label for="mood">Select your mood:</label>
-                <select id="mood" name="mood">
-                    <option value="">Choose </option>
-                    <option value="Calm">Calm</option>
-                    <option value="Energize">Energize</option>
-                    <option value="Focus">Focus</option>
-                </select>
-            </div>
-            <button class="begin-btn" type="submit">Begin</button>
-            <div class="subtext">Start your self-calibration</div>
-        </form>
+        <div class="welcome-container">
+            <div class="welcome-title">Welcome to Inner Universe</div>
+            <div class="welcome-description">Discover the power of chakra meditation through guided hand gestures. Let your journey to inner peace begin.</div>
+            <div class="gradient-divider"></div>
+            <div class="welcome-subtext">Ready to explore your energy centers?</div>
+        </div>
+        <button class="start-journey-btn" onclick="window.location.href='/session'">Start Your Journey</button>
     </div>
     <script>
         // Generate floating particles

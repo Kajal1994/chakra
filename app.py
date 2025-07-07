@@ -12,6 +12,10 @@ def calibrate():
     mood = request.args.get('mood', '')
     return render_template('calibrate.html', mood=mood)
 
+@app.route('/session')
+def session():
+    return render_template('session.html')
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True) 
