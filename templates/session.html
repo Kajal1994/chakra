@@ -145,7 +145,7 @@
     // Update renderChakraSelector to allow back navigation to mood selection
     function renderChakraSelector() {
         moodStep = 3;
-        stepIndicator.textContent = 'Step 1 of 3';
+        stepIndicator.textContent = '';
         backBtn.style.display = 'inline-block';
         stepPanel.innerHTML = `
             <div class="chakra-selector">
@@ -200,7 +200,7 @@
     }
 
     function renderDemoOrPractice() {
-        stepIndicator.textContent = 'Step 2 of 3';
+        stepIndicator.textContent = '';
         backBtn.textContent = 'Back to Mood Selection';
         backBtn.style.display = 'inline-block';
         const c = chakras[selectedChakra];
@@ -216,7 +216,7 @@
     }
 
     function renderDemo() {
-        stepIndicator.textContent = 'Step 2 of 3';
+        stepIndicator.textContent = '';
         backBtn.style.display = 'inline-block';
         const c = chakras[selectedChakra];
         // Map chakra names to actual GIF filenames
@@ -264,14 +264,13 @@
     }
 
     function renderPractice() {
-        stepIndicator.textContent = 'Step 3 of 3';
+        stepIndicator.textContent = '';
         backBtn.style.display = 'inline-block';
         const c = chakras[selectedChakra];
         stepPanel.innerHTML = `
             <div class="practice-area">
                 <video id="practice-cam" autoplay playsinline muted></video>
                 <canvas id="practice-canvas" width="480" height="360" style="position:absolute;left:0;top:0;pointer-events:none;"></canvas>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Hand_silhouette.svg/120px-Hand_silhouette.svg.png" class="hand-outline" alt="Hand Outline" />
             </div>
             <div class="feedback" id="practice-feedback">Waiting for your gesture…</div>
         `;
