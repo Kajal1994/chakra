@@ -267,12 +267,33 @@
         stepIndicator.textContent = '';
         backBtn.style.display = 'inline-block';
         const c = chakras[selectedChakra];
+        // Get the selected mood name (if any)
+        let moodName = '';
+        if (typeof selectedMood === 'number' && moods[selectedMood]) {
+            if (moods[selectedMood].name === 'Let me choose manually') {
+                // Find the first mood that maps to this chakra
+                const mappedMood = moods.find(m => m.chakra && m.chakra.toLowerCase() === c.name.toLowerCase());
+                moodName = mappedMood ? mappedMood.name : '';
+            } else {
+                moodName = moods[selectedMood].name;
+            }
+        }
+        // Update the session header dynamically
+        const sessionHeader = document.querySelector('.session-header');
+        if (sessionHeader) {
+            sessionHeader.textContent = `You’re now practicing: ${c.name} Chakra`;
+        }
         stepPanel.innerHTML = `
-            <div class="practice-area">
-                <video id="practice-cam" autoplay playsinline muted></video>
-                <canvas id="practice-canvas" width="480" height="360" style="position:absolute;left:0;top:0;pointer-events:none;"></canvas>
+            <div style="width:100%;display:flex;flex-direction:column;align-items:center;">
+                ${moodName ? `<div style="margin-bottom:1.1rem;width:100%;display:flex;justify-content:center;">
+                    <span style="background:linear-gradient(90deg,#7b2ff2,#43a047);color:#fff;padding:0.5rem 1.3rem;border-radius:18px;font-size:1.1rem;font-weight:600;box-shadow:0 2px 12px #0002;letter-spacing:0.5px;">Current Mood: <span style='color:#ffd700;'>${moodName}</span></span>
+                </div>` : ''}
+                <div class="practice-area">
+                    <video id="practice-cam" autoplay playsinline muted></video>
+                    <canvas id="practice-canvas" width="480" height="360" style="position:absolute;left:0;top:0;pointer-events:none;"></canvas>
+                </div>
+                <div class="feedback" id="practice-feedback">Waiting for your gesture…</div>
             </div>
-            <div class="feedback" id="practice-feedback">Waiting for your gesture…</div>
         `;
         setupPracticeCamera();
     }
