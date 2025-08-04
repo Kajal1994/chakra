@@ -56,11 +56,44 @@
         { name: 'Root', color: 'chakra-color-root', symbol: '\u25CF', demo: 'Root: ring finger tip touching thumb tip', feedback: 'grounding & stability.' },
         { name: 'Sacral', color: 'chakra-color-sacral', symbol: '\u25CF', demo: 'Sacral: little finger tip touching thumb tip', feedback: 'creativity & pleasure.' },
         { name: 'Solar Plexus', color: 'chakra-color-plexus', symbol: '\u25CF', demo: 'Solar Plexus: ring finger touching base of thumb', feedback: 'center of confidence.' },
-        { name: 'Heart', color: 'chakra-color-heart', symbol: '\u25CF', demo: 'Heart: both palms pressed together', feedback: 'love & compassion.' },
+        { name: 'Heart', color: 'chakra-color-heart', symbol: '\u25CF', demo: 'Heart: Prana Mudra – thumb touching ring and little fingers, while index and middle fingers remain extended upright', feedback: 'love & compassion.' },
         { name: 'Throat', color: 'chakra-color-throat', symbol: '\u25CF', demo: 'Throat: middle finger tip touching thumb tip', feedback: 'communication & truth.' },
         { name: 'Third Eye', color: 'chakra-color-third', symbol: '\u25CF', demo: 'Third Eye: fingertips touching in dome shape', feedback: 'intuition & insight.' },
         { name: 'Crown', color: 'chakra-color-crown', symbol: '\u25CF', demo: 'Crown: index finger tip touching thumb tip', feedback: 'spiritual connection.' }
     ];
+    // --- Chakra audio preload ---
+    const chakraAudio = {
+      root: new Audio('/static/audio/root.mp3'),
+      sacral: new Audio('/static/audio/sacral.mp3'),
+      solarplexus: new Audio('/static/audio/solarplexus.mp3'),
+      heart: new Audio('/static/audio/heart.mp3'),
+      throat: new Audio('/static/audio/throat.mp3'),
+      thirdeye: new Audio('/static/audio/thirdeye.mp3'),
+      crown: new Audio('/static/audio/crown.mp3')
+    };
+    Object.values(chakraAudio).forEach(audio => {
+      audio.loop = true;
+      audio.volume = 0.5;
+    });
+    let currentChakraSound = null;
+    function playChakraSound(chakraKey) {
+      if (currentChakraSound && currentChakraSound !== chakraAudio[chakraKey]) {
+        currentChakraSound.pause();
+        currentChakraSound.currentTime = 0;
+      }
+      if (chakraAudio[chakraKey] && currentChakraSound !== chakraAudio[chakraKey]) {
+        chakraAudio[chakraKey].currentTime = 0;
+        chakraAudio[chakraKey].play();
+        currentChakraSound = chakraAudio[chakraKey];
+      }
+    }
+    function stopChakraSound() {
+      if (currentChakraSound) {
+        currentChakraSound.pause();
+        currentChakraSound.currentTime = 0;
+        currentChakraSound = null;
+      }
+    }
     let selectedChakra = null;
     let step = 1;
     let practiceActive = false;
@@ -249,6 +282,7 @@
         if (canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height); }
         const feedback = document.getElementById('practice-feedback');
         if (feedback) feedback.textContent = '';
+        stopChakraSound(); // Stop audio when leaving practice
     }
 
     function renderCalibrationStep() {
@@ -377,7 +411,7 @@
             'root': 'rootchakra-gif.gif',
             'sacral': 'sacralchakra-gif.gif',
             'solarplexus': 'solarplexus-gif.gif',
-            'heart': 'heartchakra.jpg',
+            'heart': 'prana-mudra.png',
             'throat': 'throatchakra-gif.gif',
             'thirdeye': 'thirdeyechakra.jpg',
             'crown': 'crown-gif.gif'
@@ -401,7 +435,7 @@
                 meaning: 'Confidence, willpower, energy, and personal power.'
             },
             'heart': {
-                mudra: 'Anjali Mudra',
+                mudra: 'Prana Mudra',
                 chakra: 'Heart Chakra (Anahata)',
                 meaning: 'Love, compassion, harmony, and emotional balance.'
             },
@@ -525,7 +559,7 @@
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
         hands.setOptions({
-            maxNumHands: (chakras[selectedChakra].name.toLowerCase() === 'heart' || chakras[selectedChakra].name.toLowerCase() === 'third eye') ? 2 : 1,
+            maxNumHands: (chakras[selectedChakra].name.toLowerCase() === 'third eye') ? 2 : 1,
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5
@@ -541,6 +575,7 @@
                 correctGesture = false;
                 gestureHoldStart = null;
                 setFeedback('No hand detected. Please show your hand to the camera.');
+                stopChakraSound(); // Stop audio if no hand
                 return;
             }
             handDetected = true;
@@ -551,19 +586,41 @@
             });
             // Gesture detection (robust)
             const gestureOk = detectChakraGestureRobust(results, chakras[selectedChakra].name);
+            const chakraKey = chakras[selectedChakra].name.toLowerCase().replace(/\s/g, '');
+            
+            // Debug logging for Heart Chakra
+            if (chakras[selectedChakra].name.toLowerCase() === 'heart' && 
+                (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+                console.log('Heart Chakra Gesture Detection Result:', gestureOk);
+            }
+            
             if (gestureOk) {
+                playChakraSound(chakraKey);
                 if (!gestureHoldStart) gestureHoldStart = Date.now();
                 if (Date.now() - gestureHoldStart > 1000) {
                     correctGesture = true;
                     gestureConfirmed = true;
-                    setFeedback(`Correct gesture detected for <b>${chakras[selectedChakra].name} Chakra</b> — you can proceed.`);
+                    if (chakras[selectedChakra].name.toLowerCase() === 'heart') {
+                        setFeedback('Heart Chakra gesture detected – Prana Mudra');
+                    } else {
+                        setFeedback(`Correct gesture detected for <b>${chakras[selectedChakra].name} Chakra</b> — you can proceed.`);
+                    }
                 } else {
-                    setFeedback(`Hold the correct gesture for <b>${chakras[selectedChakra].name} Chakra</b>…`);
+                    if (chakras[selectedChakra].name.toLowerCase() === 'heart') {
+                        setFeedback('Hold the Prana Mudra gesture for Heart Chakra…');
+                    } else {
+                        setFeedback(`Hold the correct gesture for <b>${chakras[selectedChakra].name} Chakra</b>…`);
+                    }
                 }
             } else {
+                stopChakraSound();
                 correctGesture = false;
                 gestureHoldStart = null;
-                setFeedback(`Incorrect gesture. Adjust your fingers to match the <b>${chakras[selectedChakra].name} Chakra</b> mudra.`);
+                if (chakras[selectedChakra].name.toLowerCase() === 'heart') {
+                    setFeedback('Incorrect gesture. Please try again.');
+                } else {
+                    setFeedback(`Incorrect gesture. Adjust your fingers to match the <b>${chakras[selectedChakra].name} Chakra</b> mudra.`);
+                }
             }
         });
         // Camera loop (non-blocking)
@@ -604,25 +661,67 @@
         }
         // Tolerance for distances
         const DIST_TOL = 0.30; // 30% of palm width
-        // Two-hand gestures
-        if (chakraName.toLowerCase() === 'heart' || chakraName.toLowerCase() === 'third eye') {
+
+        // --- Prana Mudra for Heart Chakra (single hand only) ---
+        if (chakraName.toLowerCase() === 'heart') {
+            if (!results.multiHandLandmarks || results.multiHandLandmarks.length !== 1) return false;
+            const l = results.multiHandLandmarks[0];
+            const ref = handRef(l);
+            
+            // Tight but reasonable tolerance for Prana Mudra
+            const PRANA_TOL = 0.18; // Tight threshold for fingertip contact
+            
+            // Thumb tip (4) touches ring tip (16) and pinky tip (20) - BOTH must be true
+            const thumbRing = normDist(l[4], l[16], ref) < PRANA_TOL;
+            const thumbPinky = normDist(l[4], l[20], ref) < PRANA_TOL;
+            const bothFingersTouching = thumbRing && thumbPinky;
+            
+            // Index (8) and middle (12) fingers straight
+            const indexStraight = isFingerStraight(l, 8, 6, 5, 0.35);
+            const middleStraight = isFingerStraight(l, 12, 10, 9, 0.35);
+            // Index and middle fingers clearly apart
+            const indexMiddleApart = normDist(l[8], l[12], ref) > 0.12;
+            // Ring and pinky bent (not straight)
+            const ringBent = !isFingerStraight(l, 16, 14, 13, 0.3);
+            const pinkyBent = !isFingerStraight(l, 20, 18, 17, 0.3);
+            // NO palmFacing check (rotation/orientation invariant)
+            // Core conditions for Prana Mudra (must all be true)
+            const coreConditions = [
+                bothFingersTouching,  // BOTH ring and pinky touching thumb
+                indexStraight,
+                middleStraight
+            ];
+            // Secondary conditions (at least 2/3 must be true)
+            const secondaryConditions = [
+                indexMiddleApart,
+                ringBent,
+                pinkyBent
+            ];
+            // Require ALL core conditions and at least 2/3 secondary conditions
+            const coreOk = coreConditions.every(Boolean);
+            const secondaryOk = secondaryConditions.filter(Boolean).length >= 2;
+            // Debug logging (only in development)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                console.log('Prana Mudra Detection:', {
+                    thumbRing, thumbPinky, bothFingersTouching,
+                    indexStraight, middleStraight,
+                    indexMiddleApart, ringBent, pinkyBent,
+                    coreOk, secondaryOk, result: coreOk && secondaryOk
+                });
+            }
+            return coreOk && secondaryOk;
+        }
+        // Two-hand gestures (Third Eye only - Heart is handled above)
+        if (chakraName.toLowerCase() === 'third eye') {
             if (!results.multiHandLandmarks || results.multiHandLandmarks.length < 2) return false;
             const hand1 = results.multiHandLandmarks[0];
             const hand2 = results.multiHandLandmarks[1];
             const ref1 = handRef(hand1);
             const ref2 = handRef(hand2);
-            if (chakraName.toLowerCase() === 'heart') {
-                // Heart: all fingertips and palms close
-                const tips = [4,8,12,16,20];
-                const palmsClose = normDist(hand1[0], hand2[0], (ref1+ref2)/2) < 1.3;
-                const tipsClose = tips.map(i => normDist(hand1[i], hand2[i], (ref1+ref2)/2) < 1.2);
-                return fuzzyMatch([palmsClose, ...tipsClose], 0.8);
-            } else if (chakraName.toLowerCase() === 'third eye') {
-                // Third Eye: all fingertips close
-                const tips = [4,8,12,16,20];
-                const tipsClose = tips.map(i => normDist(hand1[i], hand2[i], (ref1+ref2)/2) < 1.2);
-                return fuzzyMatch(tipsClose, 0.8);
-            }
+            // Third Eye: all fingertips close
+            const tips = [4,8,12,16,20];
+            const tipsClose = tips.map(i => normDist(hand1[i], hand2[i], (ref1+ref2)/2) < 1.2);
+            return fuzzyMatch(tipsClose, 0.8);
         } else {
             if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) return false;
             const l = results.multiHandLandmarks[0];
